@@ -1,28 +1,29 @@
-# Project Overview
+# Clio Muse: Ticket Prediction for Skip-The-Line Products
+## Project Overview
 
-## Objective
+**Objective**
 To accurately forecast and purchase the optimal number of tickets from museums and archaeological sites for the company's skip-the-line (STL) products. The primary goal is to consistently satisfy daily customer demand without accumulating redundant, financially risky ticket inventory.
 
-## The Problem
+**The Problem**
 Historically, the required number of tickets for each product was manually calculated by a product manager using static Excel formulas. This manual approach was unable to accurately predict the dynamic fluctuations in daily ticket demand, leading to operational inefficiencies such as unmet customer demand on busy days or capital wasted on unsold, dead inventory during slower periods.
 
-## The Solution
+**The Solution**
 An internal ticket prediction system designed specifically for the customer care department. The tool accepts a product_id along with a selected start and end date as inputs. As output, it returns a data-driven confidence interval, providing a precise lower and upper bound on the number of tickets that must be secured for that specific product to safely meet demand while protecting company margins.
 
-## Key Outcomes
+**Key Outcomes**
 * Engineered a robust machine learning forecasting pipeline utilizing 5 years of historical PostgreSQL booking data alongside live environmental weather data.
 * Successfully isolated and removed structural data anomalies, such as the COVID-19 pandemic window, while preserving true, high-volume business outliers.
 * Solved the new-product "cold-start" problem by implementing temporal feature masking.
 * Evaluated multiple advanced gradient boosting frameworks, including XGBoost, LightGBM, and CatBoost.
 * Developed a final, highly accurate CatBoost model mathematically optimized with a Custom Asymmetric MAE metric to explicitly penalize overforecasting and minimize the financial risk of dead inventory.
 
-## Tech Stack
-* **Programming Languages:** Python, SQL.
-* **Data Sources:** PostgreSQL Database, Visual Crossing Weather API.
-* **Libraries:**
-    * **Data Processing & Analysis:** Pandas, NumPy, Statsmodels.
-    * **Visualization:** Matplotlib, Seaborn.
-    * **Machine Learning Frameworks:** Scikit-Learn, XGBoost, LightGBM, CatBoost.
+**Tech Stack**
+* ***Programming Languages:*** Python, SQL.
+* ***Data Sources:*** PostgreSQL Database, Visual Crossing Weather API.
+* ***Libraries:***
+    * ***Data Processing & Analysis:*** Pandas, NumPy, Statsmodels.
+    * ***Visualization:*** Matplotlib, Seaborn.
+    * ***Machine Learning Frameworks:*** Scikit-Learn, XGBoost, LightGBM, CatBoost.
 
 ---
 
