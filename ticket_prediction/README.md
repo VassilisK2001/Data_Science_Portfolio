@@ -50,10 +50,19 @@ Merged all the data in a dataframe and sorted all the information by travel date
 In this stage, I performed a comprehensive analysis of the historical booking and weather data to identify the underlying drivers of demand and validate the feature set for the forecasting model. By examining temporal patterns, weather sensitivity, and product attributes, I explored the factors that most significantly influence daily traveler volume. This analysis was conducted using Pandas for data aggregation, Matplotlib and Seaborn for visualizing distributions and correlations, and Statsmodels for advanced time series decomposition and autocorrelation analysis.
 
 * **Seasonal Decomposition:** To explore patterns in product sales over time, I performed Time Series Decomposition (using seasonal_decompose from statsmodels) to break down the daily, monthly, and yearly traveler count into Trend, Seasonal, and Residual components. I selected the multiplicative model to account for the growing variance in the number of travelers over time. The analysis of the trend component confirmed that there is a steady upward trend in the post-pandemic period (late 2021–2023), validating the decision to exclude the anomalous COVID-19 window. The seasonal component revealed a strong 7-day periodicity with sharp peaks on weekends, alongside a distinct annual seasonality where demand consistently surged during the summer months. This cyclicality proved that 'Day of Week' and 'Month' would be the important predictors for the model.
+
+![Multiplicative Seasonal Decomposition of Daily Travelers](images/seasonal_decomposition.png)
+
 * **Autocorrelation Analysis:** Since lag features would potentially be good predictors for the model, I plotted the autocorrelation function and partial autocorrelation function (using functions plot_acf and plot_pacf from statsmodels). The ACF plot displayed significant spikes at Lag 7, 14, and 21, confirming a strong weekly correlation. The PACF plot showed a sharp cutoff after Lag 1, indicating that the number of travelers today is heavily dependent on the immediate past 24 hours.
+
+![Autocorrelation Function (ACF) of Daily Travelers](images/acf_plot.png)
+
 * **Weather Correlation Analysis:** to validate the use of weather features as predictor variables, I plotted a correlation heatmap using the seaborn library, which revealed that the variables that had a strong correlation with the number of travelers were maximum temperature and cloud coverage.
 * **Category-Based Demand Variance:** To explore the potential use of tour categories included in STL products as predictors, we created Boxplots to visualize the distribution of average daily bookings per tour category. The boxplots showed that combo tours (multi-site packages) have a much higher median than single-site tours.
 * **Price Elasticity Analysis:** To verify whether price would be a good predictor, we plotted a scatterplot that shows the price against average daily sales. This surprisingly showed that more expensive STL products generally sell more.
+
+![Price Elasticity: Product Price vs. Average Daily Sales](images/price_elasticity_scatter.png)
+
 * **Venue level hierarchy:** Exploring the use of venue location as a predictor in the model, we aggregated the total per venue id, and visualized the top 10 performing venues using a bar chart. The bar chart confirmed that specific venues have a very high demand regardless of the specific product associated with them.
 
 ---
@@ -73,7 +82,7 @@ Before experimenting with different machine learning algorithms, I applied Simul
 ### Dynamic Holdout Set for Model Evaluation
 To ensure proper model evaluation, I implemented a Dynamic Holdout Set strategy for validation. Because the dataset represents a continuous time series of booking demand, standard randomized train-test splitting would introduce severe data leakage by allowing the algorithm to train on future events to predict past occurrences. To prevent this, I utilized a strict chronological split. Specifically, the model was trained on all available historical data except for the most recent 12 months, which were held out entirely as an unseen, forward-looking test set.
 
-![Model Evaluation Strategy: Expanding-Window TimeSeriesSplit & Dynamic Holdout](time_series_split_diagram.png)
+![Model Evaluation Strategy: Expanding-Window TimeSeriesSplit & Dynamic Holdout](images/time_series_split_diagram.png)
 
 ---
 
@@ -111,8 +120,12 @@ Finally, maintaining parity with the broader experimental framework, the algorit
 ### Learning Curve Analysis
 To monitor the training process and diagnose potential underfitting or overfitting, learning curves were plotted for each algorithm. Technically, this was implemented by extracting the internal evaluation history dictionaries from each trained model (e.g., using evals_result() for XGBoost and LightGBM, and get_evals_result() for CatBoost) and visualizing the training and validation loss across all boosting iterations using the matplotlib library. The learning curves revealed distinct algorithmic behaviors. XGBoost maintained a stable, balanced fit with a consistent gap between training and validation errors. LightGBM demonstrated a very rapid initial decline in training error, indicating a slight tendency to overfit early on. However, the strict hyperparameter regularization and the early-stopping mechanism successfully halted this behavior before severe overfitting could corrupt the test predictions. Conversely, CatBoost exhibited the smoothest and most stable convergence. Its built-in oblivious tree architecture and explicit temporal tracking effectively prevented both underfitting and overfitting throughout the entire training cycle.
 
+![CatBoost Learning Curves: Training vs. Validation Loss](images/catboost_learning_curves.png)
+
 ### Feature Importance & Business Validation
 To extract actionable business insights and understand how the algorithms were making decisions, feature importance was analyzed for each model. This was technically implemented using the libraries' built-in methods (e.g., plot_importance for XGBoost/LightGBM and get_feature_importance for CatBoost), specifically isolating the "Gain" metric to measure which features mathematically reduced the most prediction error. The results across all three models heavily validated the hypotheses formed during the Exploratory Data Analysis phase. The engineered 7-day historical lag and the static metadata, particularly venue_id, were consistently identified as the dominant drivers of daily traveler volume. However, the models prioritized them differently based on their architecture. While LightGBM relied heavily on the temporal lags, CatBoost’s native Ordered Target Statistics algorithm allowed it to extract significantly more predictive power directly from the venue_id and tour_category features. Finally, environmental variables, specifically maximum temperature and cloud coverage, consistently ranked as critical secondary features across all models, proving their necessity in fine-tuning daily demand forecasts.
+
+![CatBoost Feature Importance (Gain)](images/catboost_feature_importance.png)
 
 ### Final Model Selection
 Based on a holistic evaluation of the learning curves, feature importance distributions, and final predictive accuracy, CatBoost was selected as the superior and final forecasting model. When evaluated on the strictly unseen 12-month holdout set, CatBoost achieved the lowest Standard MAE, providing business stakeholders with the most accurate baseline predictions. Beyond pure accuracy, its learning curves proved it was the most structurally robust against the noise of daily tourism fluctuations, and its feature importance profile demonstrated an optimal balance between leveraging historical lag features and high-cardinality metadata. Ultimately, CatBoost proved to be the most reliable engine for minimizing the Custom Asymmetric MAE, safely guiding the algorithm to deliberately underforecast and minimize the financial risk of dead inventory.
@@ -134,4 +147,4 @@ To maintain forecasting accuracy as consumer behavior evolves, automated pipelin
 ### System Monitoring
 Finally, a continuous monitoring system is required to track the health of the production model. By integrating tools like Evidently AI, the system will actively monitor for Data Drift (e.g., anomalies in the incoming weather API structure) and Concept Drift (e.g., sudden changes in overall tourism demand patterns due to external market factors). If drift thresholds are breached, automated alerts will be triggered via Slack or email, ensuring the data science team can proactively intervene before business operations are impacted.
 
-![Production MLOps & System Architecture Strategy](system_architecture.jpeg)
+![Production MLOps & System Architecture Strategy](images/system_architecture.jpeg)

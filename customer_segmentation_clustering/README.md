@@ -13,6 +13,10 @@
 * **Actionable Interventions:** Defined specific channels for each persona, such as Real-Time Push Notifications for tourists (geo-temporally bound) versus Educational Email Sequences for browsers (to reduce friction).
 
 ---
+## System Architecture
+![Clio Muse Behavioral Customer Segmentation Pipeline](images/system_architecture.jpeg)
+
+---
 
 ## Data Architecture & Collection
 * **Tour Data:** Collected data about tours (id, category) and stories (difficulty, language, duration, theme) from a **PostgreSQL** database.
@@ -40,6 +44,8 @@ In this stage, I analyzed behavioral data to identify patterns crucial for clust
 
 * **Completion Rate Classification:** Visualizations revealed users usually fall into two extremes: **skimmers** (10-20% completion) and **completers** (90%+ completion).
 * **Micro-Seasonality:** I decomposed interaction timestamps to generate a **Usage Heatmap**. This revealed two distinct fingerprints: a 'Commuter Pattern' (spikes at 8 AM/6 PM weekdays) and a 'Tourist Pattern' (sustained high activity 10 AM–4 PM on weekends).
+![App Usage Heatmap: Commuter vs. Tourist Fingerprints](images/usage_heatmap.png)
+
 * **Macro-Seasonality:** Using seasonality decomposition from the `statsmodel` library, I confirmed that 'High Season' (June–Sept) accounts for 60% of total annual volume.
 * **Content Preference:** I generated a **Category Co-occurrence Matrix** using Jaccard Similarity. This measure was chosen due to high data sparsity, focusing purely on active user intent.
 * **Findings:** Observed strong positive correlation between 'Gastronomy' and 'Nightlife', and negative correlation between 'Religious History' and 'Modern Art'.
@@ -88,10 +94,14 @@ To select the optimal model, I used a multi-metric validation strategy.
 * **Result:** GMM achieved the highest Silhouette Score and lowest Davies-Bouldin Index compared to HDBSCAN and FCM.
 * **Visual Validation:** I applied **Principal Component Analysis (PCA)** to reduce the feature space to 2 components. The 2D scatter plot confirmed that the 4 clusters occupied distinct, non-overlapping regions, reinforcing that the algorithm detected genuine behavioral separation.
 
+![GMM Cluster Separation in PCA Space](images/pca_clusters.png)
+
 ---
 
 ## Results & Interpretation
 To profile the segments, I analyzed **Cluster Centroids** and visualized them using a **Radar Chart** to compare each persona against the population average.
+
+![Behavioral Persona Profiles - Radar Chart](images/radar_chart.png)
 
 ### Cluster 1: "The Cultural Commuter" (≈20%)
 * **Profile:** Exceptionally high `commuter_hour_ratio` (> 60%) with very low `weekend_intensity_score`.
