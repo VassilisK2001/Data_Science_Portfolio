@@ -1,4 +1,7 @@
-# Clio Muse: Behavioral Customer Segmentation
+# Audio Tour App: Behavioral Customer Segmentation
+
+***🔒 Disclaimer***: To protect business confidentiality, the company name has been anonymized, and the data used to generate these results is entirely synthetic. All business metrics, segment sizes, and strategic outcomes have been heavily distorted. This report is shared solely to demonstrate the data science methodology, feature engineering process, and unsupervised learning pipeline.
+
 
 ## Project Overview
 **Objective:** To transition the marketing strategy from generic, demographic-based targeting to high-precision, context-driven segmentation by identifying distinct behavioral patterns within the audio tour user base.
@@ -8,13 +11,13 @@
 **The Solution:** I engineered an end-to-end unsupervised learning pipeline using **Gaussian Mixture Models (GMM)** to assign users to segments based on probability rather than binary rules.
 
 **Key Outcomes:**
-* **Discovered 4 distinct user types previously invisible to the business:** "The High-Season Weekender" (35%), "The Cultural Commuter" (20%), "The Niche Historian" (15%), and "The Disengaged Browser" (30%).
-* **Context-Driven Strategy:** The analysis proved that behavior is driven by context (Commute vs. Travel) rather than demographics, validating a shift to lifecycle-specific campaigns.
-* **Actionable Interventions:** Defined specific channels for each persona, such as Real-Time Push Notifications for tourists (geo-temporally bound) versus Educational Email Sequences for browsers (to reduce friction).
+* **Behavioral Segmentation** Successfully engineered an unsupervised learning pipeline using GMM to cluster the user base into 4 distinct behavioral personas.
+* **Context-Driven Strategy:** The analysis demonstrated that user engagement is strongly correlated with temporal context (e.g., commute hours vs. weekend travel) rather than static demographic profiles.
+* **Actionable Interventions:** Translated model outputs into strategic marketing recommendations, matching tailored communication channels (e.g., real-time push notifications vs. educational email sequences) to each segment based on their probabilistic assignment.
 
 ---
 ## System Architecture
-![Clio Muse Behavioral Customer Segmentation Pipeline](images/system_architecture.jpeg)
+![Behavioral Customer Segmentation Pipeline](images/system_architecture.jpeg)
 
 ---
 
@@ -46,7 +49,7 @@ In this stage, I analyzed behavioral data to identify patterns crucial for clust
 * **Micro-Seasonality:** I decomposed interaction timestamps to generate a **Usage Heatmap**. This revealed two distinct fingerprints: a 'Commuter Pattern' (spikes at 8 AM/6 PM weekdays) and a 'Tourist Pattern' (sustained high activity 10 AM–4 PM on weekends).
 ![App Usage Heatmap: Commuter vs. Tourist Fingerprints](images/usage_heatmap.png)
 
-* **Macro-Seasonality:** Using seasonality decomposition from the `statsmodel` library, I confirmed that 'High Season' (June–Sept) accounts for 60% of total annual volume.
+* **Macro-Seasonality:** Using seasonality decomposition from the `statsmodel` library, I confirmed that 'High Season' (June–Sept) accounts for a largepercentage of the total annual volume.
 * **Content Preference:** I generated a **Category Co-occurrence Matrix** using Jaccard Similarity. This measure was chosen due to high data sparsity, focusing purely on active user intent.
 * **Findings:** Observed strong positive correlation between 'Gastronomy' and 'Nightlife', and negative correlation between 'Religious History' and 'Modern Art'.
 
@@ -103,32 +106,32 @@ To profile the segments, I analyzed **Cluster Centroids** and visualized them us
 
 ![Behavioral Persona Profiles - Radar Chart](images/radar_chart.png)
 
-### Cluster 1: "The Cultural Commuter" (≈20%)
-* **Profile:** Exceptionally high `commuter_hour_ratio` (> 60%) with very low `weekend_intensity_score`.
+### Cluster 1: "The Cultural Commuter"
+* **Profile:** Exceptionally high `commuter_hour_ratio` with very low `weekend_intensity_score`.
 * **Behavior:** High `total_active_time` but moderate `completion_ratio` (often stops mid-tour).
 * **Interpretation:** Likely locals or students listening during transit. They use the app like a podcast/audiobook rather than a tour guide.
 
-### Cluster 2: "The High-Season Weekender" (≈35%)
+### Cluster 2: "The High-Season Weekender"
 * **Profile:** `weekend_intensity_score` near 1.0. `Seasonality Index` flags them as "High Season".
 * **Behavior:** Very high `completion_ratio` and `avg_completion_rate`.
 * **Interpretation:** Classic tourists on a city break. Highly motivated to finish tours because they are physically on-site.
 
-### Cluster 3: "The Niche Historian" (≈15%)
-* **Profile:** Extreme skew in `Category Affinity` (>80% History or Archeology).
+### Cluster 3: "The Niche Historian"
+* **Profile:** Extreme skew in `Category Affinity` towards specific subjects (e.g., History or Archeology).
 * **Behavior:** The highest `total_active_time` and `avg_completion_rate`.
 * **Interpretation:** Enthusiasts deeply interested in specific topics. They value depth over breadth.
 
-### Cluster 4: "The Disengaged Browser" (≈30%)
-* **Profile:** Low `completion_ratio` (< 20%) and low `total_active_time`.
+### Cluster 4: "The Casual Browser"
+* **Profile:** Low `completion_ratio` and low `total_active_time`.
 * **Behavior:** No clear `Category Affinity` (scattered listening).
-* **Interpretation:** Users who downloaded the app but failed to find value or got confused. High risk of churn.
+* **Interpretation:** Represents users exploring the app without committing to full content. Identifying this segment highlighted a clear opportunity for the business to test targeted onboarding campaigns to improve early-stage retention.
 
 ---
 
 ## Actionable Insights & Strategic Recommendations
 My analysis revealed that user behavior was driven by **context** (Commute vs. Travel) rather than demographics.
 
-* **For 'The Cultural Commuter':** Shift from 'City Tour' promotions to 'Subscription' offers, as these users consume content very often in short bursts.
+* **For 'The Cultural Commuter':** Because these users consume content frequently but in short bursts, it is recommended to test a shift from single-purchase promotions to subscription-based models to better align with their podcast-style listening habits.
 * **For 'The Disengaged Browser':** Low completion rates indicate onboarding friction. A targeted 'How-to' email sequence was identified as a high-potential intervention.
 * **For 'The High-Season Weekender':** Since these users are geo-temporally bound, real-time push notifications during active hours (10 AM - 4 PM) were recommended over email.
 
