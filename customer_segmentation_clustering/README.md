@@ -72,7 +72,7 @@ Based on EDA patterns, I engineered a user-level feature matrix.
 * **Category Affinity Score:** Features representing the percentage of a user's total consumption dedicated to specific categories.
 
 **Data Scaling**
-Before modeling, I applied **Standard Scaling** (z-score normalization).This was critical because GMM is a distance-based algorithm, and without scaling, features with larger magnitudes (like 'Total Active Time') would disproportionately influence cluster assignments.
+Before modeling, I applied **Standard Scaling** (z-score normalization).This was critical because some of the clustering algorithms that were tested are distance-based, and without scaling, features with larger magnitudes (like 'Total Active Time') would disproportionately influence cluster assignments.
 
 ---
 
